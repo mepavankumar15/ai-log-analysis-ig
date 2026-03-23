@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lumina AI - Log Analysis</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-primary": "#101b8b",
+                        "on-secondary-container": "#eafbff",
+                        "surface-container-high": "#141f38",
+                        "on-tertiary": "#33005b",
+                        "on-tertiary-fixed": "#270048",
+                        "surface-container-highest": "#192540",
+                        "surface-container": "#0f1930",
+                        "inverse-surface": "#faf8ff",
+                        "surface-container-low": "#091328",
+                        "secondary-dim": "#1ad0eb",
+                        "tertiary-container": "#af5cfe",
+                        "surface-tint": "#9fa7ff",
+                        "surface-container-lowest": "#000000",
+                        "primary-fixed": "#8d98ff",
+                        "inverse-on-surface": "#4d556b",
+                        "on-primary-container": "#000a7b",
+                        "primary-dim": "#8a95ff",
+                        "secondary-fixed-dim": "#29d6f1",
+                        "on-surface-variant": "#a3aac4",
+                        "surface-bright": "#1f2b49",
+                        "on-error": "#490013",
+                        "outline-variant": "#40485d",
+                        "secondary-container": "#006877",
+                        "on-secondary": "#004b56",
+                        "error-container": "#a70138",
+                        "tertiary-fixed": "#ce9bff",
+                        "primary-container": "#8d98ff",
+                        "tertiary-dim": "#9c48ea",
+                        "on-primary-fixed-variant": "#0c1889",
+                        "on-secondary-fixed-variant": "#005966",
+                        "tertiary": "#c180ff",
+                        "on-primary-fixed": "#000000",
+                        "inverse-primary": "#4954bc",
+                        "primary-fixed-dim": "#7f8af6",
+                        "background": "#060e20",
+                        "on-background": "#dee5ff",
+                        "on-error-container": "#ffb2b9",
+                        "secondary-fixed": "#48e4ff",
+                        "surface-variant": "#192540",
+                        "surface-dim": "#060e20",
+                        "on-surface": "#dee5ff",
+                        "outline": "#6d758c",
+                        "tertiary-fixed-dim": "#c488ff",
+                        "on-tertiary-container": "#000000",
+                        "on-secondary-fixed": "#003a43",
+                        "on-tertiary-fixed-variant": "#560094",
+                        "surface": "#060e20",
+                        "primary": "#9fa7ff",
+                        "secondary": "#3adffa",
+                        "error": "#ff6e84",
+                        "error-dim": "#d73357"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(25, 37, 64, 0.4);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(159, 167, 255, 0.1);
+        }
+        .tonal-shift {
+            background: linear-gradient(180deg, #091328 0%, #060e20 100%);
+        }
+        .glow-error {
+            box-shadow: 0 0 15px rgba(215, 51, 87, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body selection:bg-primary/30 min-h-screen">
+<!-- SideNavBar -->
+<aside class="h-screen w-64 fixed left-0 top-0 border-r border-primary/10 bg-[#060e20] flex flex-col py-8 z-40 hidden md:flex">
+<div class="px-6 mb-10 flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-tertiary flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary text-sm" data-icon="terminal">terminal</span>
+</div>
+<span class="text-lg font-black text-primary font-headline">Lumina AI</span>
+</div>
+<nav class="flex-1 px-4 space-y-2">
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 text-slate-400 hover:text-primary hover:bg-primary/5 hover:translate-x-1" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 bg-primary/10 text-primary border-r-4 border-primary" href="#">
+<span class="material-symbols-outlined" data-icon="terminal">terminal</span>
+<span class="font-medium">Log Explorer</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 text-slate-400 hover:text-primary hover:bg-primary/5 hover:translate-x-1" href="#">
+<span class="material-symbols-outlined" data-icon="error">error</span>
+<span class="font-medium">Anomalies</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 text-slate-400 hover:text-primary hover:bg-primary/5 hover:translate-x-1" href="#">
+<span class="material-symbols-outlined" data-icon="assessment">assessment</span>
+<span class="font-medium">Reports</span>
+</a>
+</nav>
+<div class="px-4 mt-auto pt-8 border-t border-primary/5">
+<div class="px-4 py-3 flex items-center gap-3 mb-6">
+<div class="w-10 h-10 rounded-full bg-surface-container-high border border-primary/20 flex items-center justify-center overflow-hidden">
+<img alt="AI Agent Avatar" class="w-full h-full object-cover" data-alt="Futuristic AI Avatar circle portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCemRDZeW6Zle98Cr7T-PUd_kzLlEKigmj-PVkLdnFu2LEOPdZuU_fmazz7T_PhjBi-Fc20Y8T0VTyPwCNuCMdumh0QuPeJ0OthHxE3E_pmBF2_CXGNQpro5mr1xlRv1jOuaJ9h2kQko0ejvyqHsWHXVDXCSvYc4FGcbs_UslRftAlfselJCFqrLijhZRTVnuqNj5uBR_BzdEJ795S0P-JchxdTTzysR-yDeuZtfVhbmqYST0Jwmf7h-yWADLtKwgDAyklhhMgeifo"/>
+</div>
+<div>
+<div class="text-xs font-bold text-primary uppercase tracking-wider">System Active</div>
+<div class="text-[10px] text-on-surface-variant">Lumina Engine v4.2</div>
+</div>
+</div>
+<button class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-primary to-tertiary text-on-primary font-bold text-sm shadow-lg shadow-primary/10 active:scale-95 transition-transform">
+                New Analysis
+            </button>
+</div>
+</aside>
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-[#060e20]/80 backdrop-blur-xl border-b border-primary/15 md:pl-64">
+<div class="flex justify-between items-center w-full px-8 h-16">
+<div class="flex items-center gap-4">
+<h1 class="text-xl font-bold bg-gradient-to-r from-primary to-tertiary bg-clip-text text-transparent font-headline tracking-tight">AI Log Analysis Agent</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-lg hover:bg-primary/10 transition-all text-primary/60 hover:text-primary">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<button class="p-2 rounded-lg hover:bg-primary/10 transition-all text-primary/60 hover:text-primary">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="md:pl-64 pt-24 pb-12 px-8 min-h-screen">
+<div class="max-w-5xl mx-auto space-y-10">
+<!-- Hero / Input Section -->
+<section class="space-y-6">
+<div class="space-y-2">
+<h2 class="text-3xl md:text-5xl font-extrabold font-headline tracking-tighter text-on-background">
+                        Transform Raw Data into <span class="text-secondary italic">Intelligence.</span>
+</h2>
+<p class="text-on-surface-variant max-w-2xl text-lg">
+                        Paste your system logs, stack traces, or terminal outputs below. Lumina AI will identify issues, root causes, and provide actionable fixes in seconds.
+                    </p>
+</div>
+<div class="relative group">
+<div class="absolute -inset-0.5 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-2xl blur opacity-50 group-hover:opacity-100 transition duration-1000"></div>
+<div class="relative bg-surface-container-lowest rounded-2xl p-1">
+<textarea class="w-full h-64 bg-surface-container-low text-on-surface font-mono text-sm p-6 rounded-xl border-none focus:ring-2 focus:ring-secondary/50 placeholder:text-outline/50 transition-all" id="logInput" placeholder="Paste your logs or error messages here... 
+
+[2023-10-27 14:23:01] ERROR Connection refused: localhost:5432..."></textarea>
+</div>
+</div>
+<div class="flex justify-end items-center gap-4">
+<span class="text-sm text-outline italic">Supports JSON, Syslog, StackTraces, and more.</span>
+<button class="px-8 py-4 rounded-xl bg-gradient-to-r from-primary to-tertiary text-on-primary font-bold text-lg shadow-[0_0_20px_rgba(159,167,255,0.3)] hover:shadow-[0_0_30px_rgba(159,167,255,0.5)] transition-all duration-300 transform hover:-translate-y-1 active:scale-95 flex items-center gap-2" id="analyzeBtn">
+<span class="material-symbols-outlined" data-icon="auto_awesome" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+                        Analyze Logs
+                    </button>
+</div>
+</section>
+<!-- Loading Skeleton (Hidden by default) -->
+<div class="hidden space-y-6" id="loadingState">
+<div class="glass-card p-8 rounded-2xl animate-pulse">
+<div class="h-8 bg-surface-container-highest rounded-lg w-1/3 mb-4"></div>
+<div class="h-4 bg-surface-container-highest rounded-lg w-full mb-2"></div>
+<div class="h-4 bg-surface-container-highest rounded-lg w-5/6"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="glass-card p-8 rounded-2xl animate-pulse h-48"></div>
+<div class="glass-card p-8 rounded-2xl animate-pulse h-48"></div>
+</div>
+</div>
+<!-- Results Section (Hidden by default) -->
+<section class="hidden space-y-8" id="resultsSection">
+<div class="flex items-center gap-4">
+<div class="h-px flex-1 bg-primary/10"></div>
+<h3 class="text-sm font-bold text-primary uppercase tracking-widest px-4">Analysis Result</h3>
+<div class="h-px flex-1 bg-primary/10"></div>
+</div>
+<!-- Bento Grid Results -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<!-- Issue Card (Spans 2) -->
+<div class="lg:col-span-2 glass-card p-8 rounded-2xl flex flex-col justify-between relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4">
+<div class="px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest border" id="severityBadge">
+                                HIGH SEVERITY
+                             </div>
+</div>
+<div>
+<span class="text-xs font-bold text-primary uppercase tracking-wider mb-2 block">Detected Issue</span>
+<h4 class="text-2xl font-bold font-headline text-on-background group-hover:text-primary transition-colors" id="issueTitle">
+                                PostgreSQL Connection Timeout in Authentication Module
+                            </h4>
+</div>
+<div class="mt-8">
+<span class="text-xs font-bold text-secondary uppercase tracking-wider mb-2 block">Root Cause Analysis</span>
+<p class="text-on-surface-variant leading-relaxed" id="rootCause">
+                                The application failed to establish a handshake with the database because the maximum connection pool size was exceeded during a traffic spike, coupled with a misconfigured firewall rule on port 5432.
+                            </p>
+</div>
+</div>
+<!-- Fixes Card -->
+<div class="glass-card p-8 rounded-2xl border-t-primary_dim/20">
+<span class="text-xs font-bold text-tertiary uppercase tracking-wider mb-6 block">Recommended Fixes</span>
+<ul class="space-y-4" id="fixesList">
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-secondary text-lg" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="text-sm text-on-surface">Increase `max_connections` in postgresql.conf</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-secondary text-lg" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="text-sm text-on-surface">Update connection pooler (PgBouncer) settings</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-secondary text-lg" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="text-sm text-on-surface">Verify AWS Security Group rules for VPC traffic</span>
+</li>
+</ul>
+</div>
+<!-- Beginner Explanation Card (Spans all) -->
+<div class="lg:col-span-3 glass-card p-8 rounded-2xl border-l-4 border-l-secondary relative overflow-hidden">
+<div class="absolute -right-16 -bottom-16 opacity-5">
+<span class="material-symbols-outlined text-[200px]" data-icon="lightbulb">lightbulb</span>
+</div>
+<div class="flex items-start gap-4">
+<div class="p-3 bg-secondary/10 rounded-xl text-secondary">
+<span class="material-symbols-outlined" data-icon="psychology">psychology</span>
+</div>
+<div class="space-y-2">
+<h5 class="text-lg font-bold text-on-background">Simple Explanation</h5>
+<p class="text-on-surface-variant leading-relaxed text-sm italic" id="beginnerExplanation">
+                                    "Basically, too many people tried to open the door at the same time, and the door was locked from the inside anyway. We need to make the door bigger and make sure we have the right key!"
+                                </p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Bottom Nav for Mobile -->
+<nav class="md:hidden fixed bottom-0 w-full bg-[#060e20]/90 backdrop-blur-xl border-t border-primary/15 flex justify-around items-center h-16 px-4 z-50">
+<a class="flex flex-col items-center gap-1 text-primary/60" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-[10px] font-bold">DASHBOARD</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined" data-icon="terminal" style="font-variation-settings: 'FILL' 1;">terminal</span>
+<span class="text-[10px] font-bold">EXPLORE</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-primary/60" href="#">
+<span class="material-symbols-outlined" data-icon="error">error</span>
+<span class="text-[10px] font-bold">ANOMALIES</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-primary/60" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="text-[10px] font-bold">PROFILE</span>
+</a>
+</nav>
+<!-- Background Decoration -->
+<div class="fixed top-0 left-0 w-full h-full -z-10 overflow-hidden pointer-events-none">
+<div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-[120px]"></div>
+<div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-tertiary/10 rounded-full blur-[120px]"></div>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const logInput = document.getElementById("logInput");
+    const analyzeBtn = document.getElementById("analyzeBtn");
+    const loadingState = document.getElementById("loadingState");
+    const resultsSection = document.getElementById("resultsSection");
+    
+    // Output nodes
+    const issueTitle = document.getElementById("issueTitle");
+    const rootCause = document.getElementById("rootCause");
+    const fixesList = document.getElementById("fixesList");
+    const severityBadge = document.getElementById("severityBadge");
+    const beginnerExplanation = document.getElementById("beginnerExplanation");
+
+    // Add confidence badge UI dynamically
+    const badgeContainer = severityBadge.parentElement;
+    const confidenceBadge = document.createElement("div");
+    confidenceBadge.className = "px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest border mt-2 text-center";
+    confidenceBadge.id = "confidenceBadge";
+    badgeContainer.appendChild(confidenceBadge);
+
+    // Disable button if input is empty
+    logInput.addEventListener("input", () => {
+        analyzeBtn.disabled = logInput.value.trim().length === 0;
+        if (analyzeBtn.disabled) {
+            analyzeBtn.style.opacity = "0.5";
+            analyzeBtn.style.cursor = "not-allowed";
+        } else {
+            analyzeBtn.style.opacity = "1";
+            analyzeBtn.style.cursor = "pointer";
+        }
+    });
+    // initial check
+    analyzeBtn.disabled = logInput.value.trim().length === 0;
+    if (analyzeBtn.disabled) {
+        analyzeBtn.style.opacity = "0.5";
+        analyzeBtn.style.cursor = "not-allowed";
+    }
+
+    analyzeBtn.addEventListener("click", async () => {
+        const logs = logInput.value.trim();
+        if (!logs) return;
+
+        // UI Loading State
+        analyzeBtn.disabled = true;
+        analyzeBtn.style.opacity = "0.7";
+        analyzeBtn.style.cursor = "wait";
+        analyzeBtn.innerHTML = '<span class="material-symbols-outlined animate-spin" style="font-variation-settings: \'FILL\' 1;">sync</span> Analyzing...';
+        resultsSection.classList.add("hidden");
+        loadingState.classList.remove("hidden");
+
+        try {
+            const response = await fetch("http://localhost:5000/analyze", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ logs })
+            });
+            const data = await response.json();
+
+            // Populate mapping
+            issueTitle.textContent = data.issue || "Unknown Issue";
+            rootCause.textContent = data.root_cause || "No root cause identified.";
+            beginnerExplanation.textContent = `"${data.explanation_for_beginner || 'N/A'}"`;
+
+            // Fixes
+            fixesList.innerHTML = "";
+            let fixes = data.fixes || [];
+            if (!Array.isArray(fixes)) fixes = [fixes];
+            fixes.forEach(fix => {
+                const li = document.createElement("li");
+                li.className = "flex items-start gap-3";
+                li.innerHTML = `
+                    <span class="material-symbols-outlined text-secondary text-lg" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                    <span class="text-sm text-on-surface">${fix}</span>
+                `;
+                fixesList.appendChild(li);
+            });
+
+            // Severity Coloring
+            const severity = (data.severity || "Medium").toUpperCase();
+            severityBadge.textContent = `${severity} SEVERITY`;
+            if (severity === "HIGH") {
+                severityBadge.className = "px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest border bg-error-container text-on-error-container border-error";
+            } else if (severity === "LOW") {
+                severityBadge.className = "px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest border bg-secondary-container text-on-secondary-container border-secondary";
+            } else {
+                severityBadge.className = "px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest border bg-tertiary-container text-on-tertiary-container border-tertiary";
+            }
+
+            // Confidence Rating
+            const confidence = (data.confidence || "High").toUpperCase();
+            confidenceBadge.textContent = `${confidence} CONFIDENCE`;
+            confidenceBadge.className = "px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest border bg-surface-bright text-on-surface border-outline mt-2 text-center";
+
+            // Show results
+            loadingState.classList.add("hidden");
+            resultsSection.classList.remove("hidden");
+
+        } catch (err) {
+            console.error(err);
+            alert("Error analyzing logs: " + err.message);
+            loadingState.classList.add("hidden");
+        } finally {
+            analyzeBtn.disabled = logInput.value.trim().length === 0;
+            if (analyzeBtn.disabled) {
+                analyzeBtn.style.opacity = "0.5";
+                analyzeBtn.style.cursor = "not-allowed";
+            } else {
+                analyzeBtn.style.opacity = "1";
+                analyzeBtn.style.cursor = "pointer";
+            }
+            analyzeBtn.innerHTML = `
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+                Analyze Logs
+            `;
+        }
+    });
+});
+</script>
+</body></html>

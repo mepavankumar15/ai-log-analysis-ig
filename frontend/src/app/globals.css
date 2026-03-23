@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #1308ff;
+  --color-primary-hover: #0e05cc;
+  --color-secondary: #1d26c8;
+  --color-tertiary: #f91205;
+  --color-neutral: #000000;
+  
+  --color-surface: #0a0a0a;
+  --color-surface-border: #1a1a1a;
+  
+  --color-background: #000000;
+  --color-foreground: #ffffff;
+  --color-muted: #888888;
+}
+
+@layer utilities {
+  .bg-dots {
+    /* White dotted pattern at 15% opacity */
+    background-image: radial-gradient(rgba(255, 255, 255, 0.15) 1.5px, transparent 1.5px);
+    background-size: 24px 24px;
+    background-position: 0 0;
+  }
+  
+  .glass-panel {
+    background: rgba(10, 10, 10, 0.85);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--color-surface-border);
+  }
+  
+  .brutalist-border {
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 4px 4px 0px rgba(19, 8, 255, 0.3);
+  }
+}
