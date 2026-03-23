@@ -20,36 +20,11 @@ app.post('/analyze', async (req, res) => {
             return res.status(400).json({ error: "Missing 'logs' in request body." });
         }
 
-        // Multi-step reasoning pipeline
-        console.log("Step 1: Analyzing logs...");
-        const issue = await aiService.analyzeLogs(logs);
+        // Single-pass deep reasoning pipeline via Structured Outputs
+        console.log("Sending single-pass full diagnostic generation to Gemini 2.5 Flash...");
+        const result = await aiService.analyzeAll(logs);
 
-        console.log("Step 2: Finding root cause...");
-        const rootCause = await aiService.findRootCause(issue);
-
-        console.log("Step 3: Generating fixes...");
-        const fixes = await aiService.generateFixes(rootCause);
-
-        console.log("Step 4: Classifying severity...");
-        const severity = await aiService.classifySeverity(issue);
-
-        console.log("Step 5: Generating explanation for beginner...");
-        const explanation_for_beginner = await aiService.explainForBeginner(rootCause);
-
-        console.log("Step 6: Assessing confidence level...");
-        const confidence = await aiService.assessConfidence(issue);
-
-        // Assemble the response
-        const response = {
-            issue,
-            root_cause: rootCause,
-            fixes,
-            severity,
-            explanation_for_beginner,
-            confidence
-        };
-
-        return res.json(response);
+        return res.json(result);
     } catch (error) {
         console.error("Error during log analysis:", error.message);
         
