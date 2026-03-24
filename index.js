@@ -48,11 +48,15 @@ app.post('/analyze', async (req, res) => {
 
         return res.status(500).json({
             issue,
-            root_cause: rootCause,
+            stack_fingerprint: "sys_fail_0x1",
+            hypotheses: [{
+                root_cause: rootCause,
+                confidence_score: 99,
+                justification: explanation
+            }],
             fixes,
             severity,
             explanation_for_beginner: explanation,
-            confidence: "High",
             error_details: error.message
         });
     }

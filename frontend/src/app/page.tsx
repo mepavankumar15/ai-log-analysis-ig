@@ -57,9 +57,13 @@ export default function Home() {
     const reportText = `
 === Lumina AI Diagnostic Report ===
 ISSUE: ${result.issue}
-ROOT CAUSE: ${result.root_cause}
+FINGERPRINT: ${result.stack_fingerprint}
 SEVERITY: ${result.severity || "MEDIUM"}
-CONFIDENCE: ${result.confidence || "HIGH"}
+
+HYPOTHESES:
+${(Array.isArray(result.hypotheses) ? result.hypotheses : []).map((h: any, i: number) => `[H${i+1} - ${h.confidence_score}% CONFIDENCE]
+- Root Cause: ${h.root_cause}
+- Justification: ${h.justification}`).join('\n\n')}
 
 FIX RECOMMENDATIONS:
 ${(Array.isArray(result.fixes) ? result.fixes : [result.fixes]).map((f: string, i: number) => `${i + 1}. ${f}`).join('\n')}
@@ -297,9 +301,9 @@ BEGINNER EXPLANATION:
                           </span>
                           <div className="flex flex-col gap-2 items-end">
                             {getSeverityBadge(result.severity)}
-                            {result.confidence && (
-                              <div className="px-3 py-1 bg-transparent text-white text-[10px] font-black uppercase tracking-widest border border-surface-border rounded">
-                                {result.confidence} CONFIDENCE
+                            {result.stack_fingerprint && (
+                              <div className="px-3 py-1 bg-surface-border/50 text-white text-[10px] font-mono tracking-widest border border-surface-border rounded">
+                                ID: {result.stack_fingerprint}
                               </div>
                             )}
                           </div>
@@ -308,11 +312,17 @@ BEGINNER EXPLANATION:
                           {result.issue || "Undetermined Issue"}
                         </h3>
                       </div>
-                      <div>
-                        <span className="text-muted font-bold text-xs uppercase tracking-widest mb-2 block">Root Cause Analysis</span>
-                        <p className="text-white/80 leading-relaxed text-lg border-l-2 border-surface-border pl-4">
-                          {result.root_cause || "No root cause identified."}
-                        </p>
+                      <div className="space-y-4">
+                        <span className="text-muted font-bold text-xs uppercase tracking-widest mb-2 block">Root Cause Hypotheses</span>
+                        {(Array.isArray(result.hypotheses) ? result.hypotheses : []).map((hypothesis: any, idx: number) => (
+                           <div key={idx} className="bg-surface-border/20 border border-surface-border rounded-lg p-4 ml-2 border-l-2 border-l-primary relative overflow-hidden group">
+                              <div className="absolute top-0 right-0 bg-primary/20 text-primary text-[10px] font-black px-2 py-1 rounded-bl-lg border-b border-l border-surface-border z-10">
+                                {hypothesis.confidence_score}% CONFIDENCE
+                              </div>
+                              <h5 className="font-bold text-white mb-2 text-sm pr-16">{hypothesis.root_cause}</h5>
+                              <p className="text-white/60 text-xs italic leading-relaxed">{hypothesis.justification}</p>
+                           </div>
+                        ))}
                       </div>
                     </div>
 

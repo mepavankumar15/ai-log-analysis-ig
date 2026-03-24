@@ -21,14 +21,27 @@ async function analyzeAll(logs) {
                 type: SchemaType.STRING, 
                 description: "Extract the concise key issue or error message." 
             },
-            root_cause: { 
-                type: SchemaType.STRING, 
-                description: "Determine the technical root cause of the issue." 
+            stack_fingerprint: {
+                type: SchemaType.STRING,
+                description: "A short normalized, condensed signature (e.g., 'pg_auth_failed' or 'TypeErr_Undefined_React') representing the core stack trace for grouping similar errors."
+            },
+            hypotheses: {
+                type: SchemaType.ARRAY,
+                description: "Provide 1 to 3 distinct root-cause hypotheses for this error, ranked by confidence.",
+                items: {
+                    type: SchemaType.OBJECT,
+                    properties: {
+                        root_cause: { type: SchemaType.STRING, description: "Determine the technical root cause hypothesis." },
+                        confidence_score: { type: SchemaType.NUMBER, description: "A percentage integer from 0 to 100 representing how confident you are in this hypothesis." },
+                        justification: { type: SchemaType.STRING, description: "Why do you believe this is the root cause?" }
+                    },
+                    required: ["root_cause", "confidence_score", "justification"]
+                }
             },
             fixes: { 
                 type: SchemaType.ARRAY, 
                 items: { type: SchemaType.STRING },
-                description: "Array of step-by-step resolution string instructions."
+                description: "Array of step-by-step resolution string instructions considering the most likely hypothesis."
             },
             severity: { 
                 type: SchemaType.STRING, 
@@ -36,14 +49,10 @@ async function analyzeAll(logs) {
             },
             explanation_for_beginner: { 
                 type: SchemaType.STRING, 
-                description: "Explain the root cause in simple, beginner-friendly layman terms." 
-            },
-            confidence: { 
-                type: SchemaType.STRING, 
-                description: "Exactly one of: Low, Medium, High based on how sure you are of the diagnosis." 
+                description: "Explain the issue in simple, beginner-friendly layman terms." 
             }
         },
-        required: ["issue", "root_cause", "fixes", "severity", "explanation_for_beginner", "confidence"]
+        required: ["issue", "stack_fingerprint", "hypotheses", "fixes", "severity", "explanation_for_beginner"]
     };
 
     const model = genAI.getGenerativeModel({ 
